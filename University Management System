@@ -1,0 +1,273 @@
+/*creating database*/
+create database UMS
+
+/*Using Database*/
+USE ums;
+
+/*Creating Tables*/
+create TABLE Students (
+    StudentID INT PRIMARY KEY,
+    Name VARCHAR(50),
+    Age INT,
+    Major VARCHAR(50)
+ );
+ 
+ CREATE TABLE Courses (
+    CourseID INT PRIMARY KEY,
+    CourseName VARCHAR(50),
+    Credits INT
+ );
+ 
+ CREATE TABLE Enrollments (
+    EnrollmentID INT PRIMARY KEY,
+    StudentID INT,
+    CourseID INT,
+    Grade CHAR(2),
+    FOREIGN KEY (StudentID) REFERENCES Students(StudentID),
+    FOREIGN KEY (CourseID) REFERENCES Courses(CourseID)
+ );
+ 
+CREATE TABLE Departments (
+    DeptID INT PRIMARY KEY,
+    DeptName VARCHAR(50)
+ );
+ 
+ /*alter the table*/
+ ALTER TABLE Students ADD Email VARCHAR(100);
+ 
+ /*Dropping a table*/
+ drop table Departments
+ 
+ /*Inserting data into tables*/
+ -- Insert into Students
+INSERT INTO Students (StudentID, Name, Age, Major) VALUES
+(1, 'Aarav Sharma', 20, 'Computer Science Engineering'),
+(2, 'Ishita Reddy', 22, 'Electrical Engineering'),
+(3, 'Rohan Verma', 21, 'Mechanical Engineering'),
+(4, 'Kavya Iyer', 19, 'Civil Engineering'),
+(5, 'Arjun Nair', 23, 'Electronics & Communication Engineering'),
+(6, 'Meera Gupta', 20, 'Artificial Intelligence'),
+(7, 'Sanjay Patil', 21, 'Data Science'),
+(8, 'Ananya Joshi', 22, 'Information Technology'),
+(9, 'Rahul Das', 20, 'Biotechnology Engineering'),
+(10, 'Sneha Menon', 19, 'Robotics Engineering'),
+(11, 'Vikram Rao', 24, 'Aerospace Engineering'),
+(12, 'Priya Kulkarni', 21, 'Chemical Engineering'),
+(13, 'Karthik Mishra', 22, 'Automobile Engineering'),
+(14, 'Divya Choudhary', 20, 'Environmental Engineering'),
+(15, 'Manoj Singh', 23, 'Structural Engineering'),
+(16, 'Neha Agarwal', 21, 'Software Engineering'),
+(17, 'Aditya Pillai', 19, 'Electronics Engineering'),
+(18, 'Pooja Deshmukh', 22, 'Cybersecurity'),
+(19, 'Rakesh Kumar', 20, 'Mining Engineering'),
+(20, 'Swathi Ramesh', 21, 'Industrial Engineering');
+
+-- Insert into Courses
+INSERT INTO Courses (CourseID, CourseName, Credits) VALUES
+(1, 'Data Structures', 4),
+(2, 'Digital Circuits', 3),
+(3, 'Thermodynamics', 4),
+(4, 'Structural Analysis', 3),
+(5, 'Signal Processing', 4),
+(6, 'Machine Learning', 5),
+(7, 'Database Management Systems', 4),
+(8, 'Operating Systems', 3),
+(9, 'Genetic Engineering Basics', 4),
+(10, 'Robotics Fundamentals', 5),
+(11, 'Aerodynamics', 4),
+(12, 'Chemical Reaction Engineering', 3),
+(13, 'Vehicle Dynamics', 4),
+(14, 'Environmental Impact Assessment', 3),
+(15, 'Finite Element Methods', 4),
+(16, 'Software Engineering Principles', 3),
+(17, 'Microelectronics', 4),
+(18, 'Network Security', 5),
+(19, 'Mining Technology', 3),
+(20, 'Industrial Safety Engineering', 4);
+
+-- Insert into Enrollments
+INSERT INTO Enrollments (EnrollmentID, StudentID, CourseID, Grade) VALUES
+(1, 1, 1, 'A'),
+(2, 2, 2, 'B'),
+(3, 3, 3, 'A'),
+(4, 4, 4, 'C'),
+(5, 5, 5, 'B'),
+(6, 6, 6, 'A'),
+(7, 7, 7, 'B'),
+(8, 8, 8, 'A'),
+(9, 9, 9, 'C'),
+(10, 10, 10, 'A'),
+(11, 11, 11, 'B'),
+(12, 12, 12, 'A'),
+(13, 13, 13, 'B'),
+(14, 14, 14, 'C'),
+(15, 15, 15, 'A'),
+(16, 16, 16, 'B'),
+(17, 17, 17, 'A'),
+(18, 18, 18, 'C'),
+(19, 19, 19, 'B'),
+(20, 20, 20, 'A');
+
+ /*Updating a table*/
+ UPDATE Students SET Major = 'Data Science' WHERE StudentID = 1
+/*Q. How do you delete students who are younger than 18?*/
+ DELETE FROM Students WHERE Age < 18;
+ 
+/*Q. How do you retrieve the name and major of students older than 19?*/
+ SELECT Name, Major FROM Students WHERE Age > 19;
+ 
+/*Q. How do you calculate the average age of students?*/
+ SELECT AVG(Age) AS AvgAge FROM Students;
+ 
+/*Q. How do you find the majors with more than 5 students, along with the count of students in each?*/
+ SELECT Major, COUNT(*) AS StudentCount
+ FROM Students
+ GROUP BY Major
+ HAVING COUNT(*) > 5;
+ 
+ /*Q. How do you select all students older than 20 who are majoring in Computer Science?*/
+  SELECT * FROM Students WHERE Age > 20 AND Major = 'Computer Science';
+  
+  /*Q. How do you assign ranks to students based on their grades in descending order?*/
+ SELECT studentID, Grade,
+       RANK() OVER (ORDER BY Grade DESC) AS RankInClass
+ FROM Enrollments;
+ 
+ /*Q. How do you list student names along with their enrolled course names using inner join?*/
+ SELECT s.Name, c.CourseName
+ FROM Students s
+ INNER JOIN Enrollments e ON s.StudentID = e.StudentID
+ INNER JOIN Courses c ON e.CourseID = c.CourseID;
+
+/*Q. How do you list all students with their courses (showing even those without enrollments) using left join?*/
+ SELECT s.Name, c.CourseName
+ FROM Students s
+ LEFT JOIN Enrollments e ON s.StudentID = e.StudentID
+ LEFT JOIN Courses c ON e.CourseID = c.CourseID;
+ 
+ /*Q. How do you get every possible combination of students and courses?*/
+ SELECT s.Name, c.CourseName
+ FROM Students s CROSS JOIN Courses c;
+ 
+ /*Q. How do you find pairs of students who have the same major but different student IDs?*/
+ SELECT s1.Name AS Student1, s2.Name AS Student2
+ FROM Students s1
+ JOIN Students s2 
+  ON s1.Major = s2.Major 
+ AND s1.StudentID <> s2.StudentID;
+ 
+ /*Q. How do you group students by major and list names as a comma-separated string (SQL Server)?*/
+ SELECT Major, 
+       GROUP_CONCAT(Name SEPARATOR ', ') AS Students
+FROM Students
+GROUP BY Major
+LIMIT 0, 1000;
+ 
+ /*Q. How do you group students by major and list names as a comma-separated string (MySQL)?*/
+ SELECT Major, GROUP_CONCAT(Name, ', ') AS Students
+ FROM Students
+ GROUP BY Major;
+ 
+ /*Q. How do you select students older than the average age?*/
+ SELECT Name FROM Students
+ WHERE Age > (SELECT AVG(Age) FROM Students);
+ 
+ /*Write an SQL query to fetch the names of students who have received grade ‘A’ in 
+at least one course :*/
+ SELECT Name FROM Students s
+ WHERE EXISTS (
+   SELECT * FROM Enrollments e
+   WHERE e.StudentID = s.StudentID AND e.Grade = 'A'
+ );
+ 
+ /*Q. How do you calculate the average age of students grouped by major, and then select it from a subquery?*/
+ SELECT Major, AvgAge
+ FROM (SELECT Major, AVG(Age) AS AvgAge FROM Students GROUP BY Major) t;
+ 
+/*Q. How do you combine student names and course names into one list using UNION?*/
+ SELECT Name FROM Students
+ UNION
+ SELECT CourseName FROM Courses;
+
+-- Q. How do you find student IDs that exist in both Students and Enrollments tables?
+SELECT StudentID 
+FROM Enrollments 
+INTERSECT 
+SELECT StudentID 
+FROM Students;
+
+-- Q. How do you find student IDs that are in Students but not in Enrollments?
+SELECT StudentID 
+FROM Students 
+EXCEPT 
+SELECT StudentID 
+FROM Enrollments;
+
+-- Q. How do you add a constraint that ensures students must be at least 17 years old?
+ALTER TABLE Students ADD CONSTRAINT AgeCheck CHECK (Age >= 17);
+
+-- Q. How do you drop the AgeCheck constraint from the Students table?
+ALTER TABLE Students DROP CONSTRAINT AgeCheck;
+
+-- Q. How do you create and drop an index on the Students table for the Major column?
+CREATE INDEX idx_student_major ON Students(Major); 
+DROP INDEX idx_student_major ON Students;
+
+
+-- Q. After indexing, how do you use the index for fast searching of students by major?
+SELECT * 
+FROM Students 
+WHERE Major = 'Data Science';
+
+-- Q. How do you retrieve the name and age of all students?
+SELECT Name, Age 
+FROM Students;
+
+-- Q. How do you retrieve all students older than 20?
+SELECT * 
+FROM Students 
+WHERE Age > 20;
+
+-- Q. How do you group students by major and count them?
+SELECT Major, COUNT(*) 
+FROM Students 
+GROUP BY Major;
+
+-- Q. How do you find majors with more than 5 students (using HAVING)?
+SELECT Major, COUNT(*) 
+FROM Students 
+GROUP BY Major 
+HAVING COUNT(*) > 5;
+
+-- Q. How do you list students ordered by age in descending order?
+SELECT Name, Age 
+FROM Students 
+ORDER BY Age DESC;
+
+-- Q. How do you order students by age in descending order and then by name in ascending order?
+SELECT Name, Age 
+FROM Students 
+ORDER BY Age DESC, Name ASC;
+
+-- Q. How do you select only the first 5 students from the Students table?
+SELECT * 
+FROM Students 
+LIMIT 5;
+
+-- Q. How do you retrieve student names along with their enrolled course names using inner join?
+ SELECT s.Name, c.CourseName
+ FROM Students s
+ INNER JOIN Enrollments e ON s.StudentID = e.StudentID
+ INNER JOIN Courses c ON e.CourseID = c.CourseID;
+
+-- Q. How do you retrieve all unique student IDs from both Students and Enrollments tables?
+SELECT StudentID 
+FROM Students 
+UNION 
+SELECT StudentID 
+FROM Enrollments;
+
+-- Q. How do you use a CTE to get students older than the average age?
+WITH AvgAge AS ( 
+SELECT AVG(Age) AS AgeValue FROM Students ) 
+ SELECT * FROM Students WHERE Age > (SELECT AgeValue FROM AvgAge);
